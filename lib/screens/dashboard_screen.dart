@@ -50,7 +50,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         SizedBox(height: isMobile ? 16 : 24),
                         Text(
-                          'Welcome to Dashboard',
+                          'Welcome to Dashboard Screen',
                           style: TextStyle(
                             fontSize: isMobile ? 24 : 32,
                             fontWeight: FontWeight.bold,
