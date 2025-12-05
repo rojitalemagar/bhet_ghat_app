@@ -68,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 SizedBox(height: isMobile ? 30 : 50),
                 Text(
-                  'Welcome to BhetGhat!',
+                  'Namaste, Welcome to BhetGhat!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: isMobile ? 28 : 36,
