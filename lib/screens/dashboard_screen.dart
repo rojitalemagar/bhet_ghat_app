@@ -59,7 +59,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         SizedBox(height: isMobile ? 8 : 12),
                         Text(
-                          'Hello',
+                          'Hello, This is your dashboard where you can manage your activities.',
                           style: TextStyle(
                             fontSize: isMobile ? 14 : 16,
                             color: Colors.grey.shade600,
