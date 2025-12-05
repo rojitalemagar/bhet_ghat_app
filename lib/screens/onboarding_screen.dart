@@ -13,7 +13,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<OnboardingPage> pages = [
     OnboardingPage(
-      title: 'Welcome to BhetGhat!',
+      title: 'Namaste, Welcome to BhetGhat!',
       description: 'Connect with people nearby and build meaningful relationships',
       icon: Icons.people,
     ),
