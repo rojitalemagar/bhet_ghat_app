@@ -223,7 +223,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             validator: (v) {
-                              if (v == null || v.isEmpty) return 'Please enter email';
+                              if (v == null || v.isEmpty) return 'Please enter your email';
                               if (!v.contains('@')) return 'Enter a valid email';
                               return null;
                             },
