@@ -5,6 +5,7 @@ import 'screens/register_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,10 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'BhetGhat',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        primarySwatch: Colors.deepPurple,
-      ),
+      theme: AppTheme.lightTheme,
       home: const SplashScreen(),
       routes: {
         '/onboarding': (context) => const OnboardingScreen(),
@@ -68,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 SizedBox(height: isMobile ? 30 : 50),
                 Text(
-                  'Namaste, Welcome to BhetGhat!',
+                  'Welcome to BhetGhat!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: isMobile ? 28 : 36,
