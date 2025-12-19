@@ -100,7 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     SizedBox(height: isMobile ? 8 : 12),
                     Text(
-                      'Join BhetGhat today',
+                      'Join BhetGhat Today',
                       style: TextStyle(
                         fontSize: isMobile ? 14 : 16,
                         color: Colors.white.withOpacity(0.8),
