@@ -210,7 +210,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
           _buildActivityCard(
             avatar: 'A',
-            name: 'Alice Johnson',
+            name: 'Nirjal Adhikari',
             action: 'sent you a message',
             time: '2 min ago',
             isMobile: isMobile,
@@ -218,7 +218,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           SizedBox(height: isMobile ? 12 : 16),
           _buildActivityCard(
             avatar: 'B',
-            name: 'Bob Smith',
+            name: 'Pratik Neupane',
             action: 'liked your post',
             time: '15 min ago',
             isMobile: isMobile,
@@ -226,7 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           SizedBox(height: isMobile ? 12 : 16),
           _buildActivityCard(
             avatar: 'C',
-            name: 'Charlie Brown',
+            name: 'Ankit Shah',
             action: 'started following you',
             time: '1 hour ago',
             isMobile: isMobile,
@@ -511,7 +511,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'John Doe',
+                    'Rojit Ale Magar',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -519,7 +519,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                   const Text(
-                    'john.doe@example.com',
+                    'rojitmagar@example.com',
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: 14,
