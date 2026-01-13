@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _startDelay() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
     Navigator.pushReplacementNamed(context, '/onboarding');
   }
@@ -37,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
               style: Theme.of(context)
                   .textTheme
                   .headlineMedium
-                  ?.copyWith(color: Colors.white),
+                  ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             const CircularProgressIndicator(

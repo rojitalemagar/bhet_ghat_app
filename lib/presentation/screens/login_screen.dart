@@ -1,45 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+import '../../core/constants/app_constants.dart';
+import '../controllers/auth_controller.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscure = true;
 
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState?.validate() ?? false) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Creating account...'),
-          duration: Duration(seconds: 2),
-        ),
+      final authController = context.read<AuthController>();
+
+      final user = await authController.login(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
       );
-      // Simulate registration delay
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Account created!'),
-              duration: Duration(seconds: 1),
-            ),
-          );
-          Navigator.pushReplacementNamed(context, '/dashboard');
-        }
-      });
+
+      if (user != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login successful!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pushReplacementNamed(context, AppConstants.dashboardRoute);
+      } else if (mounted) {
+        // Error message is already set in the controller
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authController.errorMessage ?? 'Login failed'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -91,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(height: isMobile ? 24 : 32),
                     // Title
                     Text(
-                      'Create Account',
+                      'Welcome Back',
                       style: TextStyle(
                         fontSize: isMobile ? 26 : 32,
                         fontWeight: FontWeight.bold,
@@ -100,7 +108,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     SizedBox(height: isMobile ? 8 : 12),
                     Text(
-                      'Join BhetGhat Today',
+                      'Login to your account',
                       style: TextStyle(
                         fontSize: isMobile ? 14 : 16,
                         color: Colors.white.withOpacity(0.8),
@@ -113,62 +121,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Name Field
-                          TextFormField(
-                            controller: _nameController,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                            decoration: InputDecoration(
-                              labelText: 'Full Name',
-                              labelStyle: TextStyle(
-                                color: Colors.white.withOpacity(0.7),
-                                fontSize: 15,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.person,
-                                color: Colors.white,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: Colors.white.withOpacity(0.3),
-                                  width: 2,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                  width: 2,
-                                ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 2,
-                                ),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 2,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.white.withOpacity(0.1),
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 12,
-                              ),
-                            ),
-                            validator: (v) =>
-                                (v == null || v.isEmpty) ? 'Enter your name' : null,
-                          ),
-                          SizedBox(height: isMobile ? 16 : 20),
                           // Email Field
                           TextFormField(
                             controller: _emailController,
@@ -223,7 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             validator: (v) {
-                              if (v == null || v.isEmpty) return 'Please enter your email';
+                              if (v == null || v.isEmpty) return 'Please enter email';
                               if (!v.contains('@')) return 'Enter a valid email';
                               return null;
                             },
@@ -303,45 +255,56 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             },
                           ),
                           SizedBox(height: isMobile ? 24 : 32),
-                          // Register Button
-                          SizedBox(
-                            width: double.infinity,
-                            height: isMobile ? 52 : 56,
-                            child: ElevatedButton(
-                              onPressed: _submit,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                          // Login Button
+                          Consumer<AuthController>(
+                            builder: (context, authController, child) {
+                              return SizedBox(
+                                width: double.infinity,
+                                height: isMobile ? 52 : 56,
+                                child: ElevatedButton(
+                                  onPressed: authController.isLoading ? null : _submit,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 5,
+                                  ),
+                                  child: authController.isLoading
+                                      ? const CircularProgressIndicator(
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                            Colors.deepPurple,
+                                          ),
+                                        )
+                                      : Text(
+                                          'Login',
+                                          style: TextStyle(
+                                            color: Colors.deepPurple,
+                                            fontSize: isMobile ? 16 : 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                 ),
-                                elevation: 5,
-                              ),
-                              child: Text(
-                                'Sign Up',
-                                style: TextStyle(
-                                  color: Colors.deepPurple,
-                                  fontSize: isMobile ? 16 : 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                              );
+                            },
                           ),
                           SizedBox(height: isMobile ? 16 : 20),
-                          // Login Link
+                          // Register Link
                           Wrap(
                             alignment: WrapAlignment.center,
                             children: [
                               Text(
-                                'Already have an account? ',
+                                "Don't have an account? ",
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.7),
                                   fontSize: isMobile ? 13 : 15,
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () => Navigator.pop(context),
+                                onTap: () =>
+                                    Navigator.pushNamed(context, AppConstants.registerRoute),
                                 child: Text(
-                                  'Login',
+                                  'Sign up',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: isMobile ? 13 : 15,

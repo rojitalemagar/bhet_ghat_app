@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/splash_screen.dart';
-import 'screens/onboarding_screen.dart';
-import 'screens/dashboard_screen.dart';
+import 'presentation/screens/login_screen.dart';
+import 'presentation/screens/register_screen.dart';
+import 'presentation/screens/splash_screen.dart';
+import 'presentation/screens/onboarding_screen.dart';
+import 'presentation/screens/dashboard_screen.dart';
 import 'app_theme.dart';
 
 void main() {

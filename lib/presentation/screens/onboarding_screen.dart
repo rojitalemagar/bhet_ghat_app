@@ -19,7 +19,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ),
     OnboardingPage(
       title: 'Meet & Chat',
-      description: 'Explore new friends and have great conversations',
+      description: 'Discover new friends and have great conversations',
       icon: Icons.chat_bubble,
     ),
     OnboardingPage(

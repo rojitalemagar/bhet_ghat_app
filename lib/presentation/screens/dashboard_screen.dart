@@ -226,7 +226,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           SizedBox(height: isMobile ? 12 : 16),
           _buildActivityCard(
             avatar: 'C',
-            name: 'Ankit Sharma',
+            name: 'Ankit Shah',
             action: 'started following you',
             time: '1 hour ago',
             isMobile: isMobile,
