@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'core/constants/app_constants.dart';
+import 'core/utils/service_locator.dart';
+import 'presentation/controllers/auth_controller.dart';
 import 'presentation/screens/login_screen.dart';
 import 'presentation/screens/register_screen.dart';
 import 'presentation/screens/splash_screen.dart';
@@ -7,7 +11,12 @@ import 'presentation/screens/onboarding_screen.dart';
 import 'presentation/screens/dashboard_screen.dart';
 import 'app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize service locator
+  await ServiceLocator.init();
+
   runApp(const MyApp());
 }
 
@@ -16,17 +25,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'BhetGhat',
-      theme: AppTheme.lightTheme,
-      home: const SplashScreen(),
-      routes: {
-        '/onboarding': (context) => const OnboardingScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/dashboard': (context) => const DashboardScreen(),
-        '/home': (context) => const HomeScreen(),
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => AuthController(
+            signUpUseCase: ServiceLocator.signUpUseCase,
+            loginUseCase: ServiceLocator.loginUseCase,
+          ),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'BhetGhat',
+        theme: AppTheme.lightTheme,
+        home: const SplashScreen(),
+        routes: {
+          AppConstants.onboardingRoute: (context) => const OnboardingScreen(),
+          AppConstants.loginRoute: (context) => const LoginScreen(),
+          AppConstants.registerRoute: (context) => const RegisterScreen(),
+          AppConstants.dashboardRoute: (context) => const DashboardScreen(),
+          AppConstants.homeRoute: (context) => const HomeScreen(),
+        },
+      ),
     );
   }
 }
