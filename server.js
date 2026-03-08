@@ -432,6 +432,7 @@ app.get('/reset-password', (req, res) => {
 
 app.post('/api/auth/reset-password', async (req, res) => {
   const { token, newPassword } = req.body;
+  pruneExpiredResetTokens();
 
   if (!token || !newPassword) {
     return res.status(400).json({ message: 'Token and new password are required' });
