@@ -52,4 +52,15 @@ class ValidationUtils {
     }
     return null;
   }
+
+  static String? getBioError(String bio) {
+    final trimmedBio = bio.trim();
+    if (trimmedBio.isEmpty) {
+      return 'Bio cannot be empty';
+    }
+    if (trimmedBio.length < 10) {
+      return 'Bio should be at least 10 characters';
+    }
+    return null;
+  }
 }
