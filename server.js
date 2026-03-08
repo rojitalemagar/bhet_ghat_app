@@ -110,6 +110,11 @@ function sanitizeInterests(interests) {
     .slice(0, 12);
 }
 
+function sanitizeBio(bio) {
+  const normalizedBio = String(bio || '').trim().replace(/\s+/g, ' ');
+  return normalizedBio.length > 240 ? normalizedBio.slice(0, 240) : normalizedBio;
+}
+
 async function sendResetEmail({ toEmail, resetLink }) {
   if (!mailTransport) {
     console.log('SMTP not configured. Password reset link (dev only):', resetLink);
