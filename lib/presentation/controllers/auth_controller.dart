@@ -199,12 +199,16 @@ class AuthController extends ChangeNotifier {
     required String token,
     required String newPassword,
   }) async {
+    final normalizedToken = token.trim();
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      await _apiService.resetPassword(token: token, newPassword: newPassword);
+      await _apiService.resetPassword(
+        token: normalizedToken,
+        newPassword: newPassword,
+      );
       _isLoading = false;
       notifyListeners();
       return true;
