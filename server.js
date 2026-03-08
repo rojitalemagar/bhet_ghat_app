@@ -561,7 +561,7 @@ app.put('/api/users/profile', (req, res) => {
     return res.status(400).json({ success: false, message: 'Email is required' });
   }
 
-  const normalizedEmail = String(email).trim().toLowerCase();
+  const normalizedEmail = normalizeEmail(email);
   const user = users[normalizedEmail];
 
   if (!user) {
