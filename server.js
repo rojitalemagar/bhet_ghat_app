@@ -294,6 +294,8 @@ app.post('/api/auth/signup', async (req, res) => {
       userId += chars.charAt(Math.floor(Math.random() * chars.length));
     }
 
+    const normalizedProfileImages = sanitizeProfileImages(profileImages);
+
     const newUser = {
       id: userId,
       name: normalizedName,
@@ -302,8 +304,8 @@ app.post('/api/auth/signup', async (req, res) => {
       gender: gender || null,
       bio: sanitizeBio(bio) || null,
       interests: sanitizeInterests(interests),
-      profileImages: Array.isArray(profileImages) ? profileImages : [],
-      profileImage: Array.isArray(profileImages) && profileImages.length > 0 ? profileImages[0] : null,
+      profileImages: normalizedProfileImages,
+      profileImage: normalizedProfileImages.length > 0 ? normalizedProfileImages[0] : null,
       createdAt: new Date().toISOString(),
       lastLogin: null,
     };
