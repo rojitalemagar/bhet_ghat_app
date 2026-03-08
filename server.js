@@ -374,6 +374,7 @@ app.get('/api/auth/check-email', (req, res) => {
 
 app.post('/api/auth/forgot-password', async (req, res) => {
   const { email } = req.body;
+  pruneExpiredResetTokens();
 
   if (!email) {
     return res.status(400).json({ message: 'Email is required' });
