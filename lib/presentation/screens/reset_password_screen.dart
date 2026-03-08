@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/utils/validation_utils.dart';
 import '../controllers/auth_controller.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -169,15 +170,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   ),
                                 ),
                               ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Password is required';
-                            }
-                            if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
-                            }
-                            return null;
-                          },
+                          validator: (value) =>
+                              ValidationUtils.getPasswordError(value ?? ''),
                         ),
                         const SizedBox(height: 12),
                         TextFormField(
