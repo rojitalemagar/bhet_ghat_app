@@ -628,7 +628,7 @@ app.get('/api/users/images/all', (_req, res) => {
 });
 
 app.get('/api/auth/user/:email', (req, res) => {
-  const email = String(req.params.email).trim().toLowerCase();
+  const email = normalizeEmail(req.params.email);
   const user = users[email];
 
   if (!user) {
