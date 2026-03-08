@@ -1,5 +1,7 @@
 /// Application constants
 class AppConstants {
+  static const String appName = 'Final Project';
+
   // Hive box names
   static const String usersBoxName = 'users';
 
