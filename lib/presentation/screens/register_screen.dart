@@ -342,16 +342,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Icons.email_outlined,
                 hintStyle,
               ),
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) {
-                  return 'Email is required';
-                }
-                final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-                if (!emailRegex.hasMatch(v.trim())) {
-                  return 'Enter a valid email';
-                }
-                return null;
-              },
+              validator: (v) => ValidationUtils.getEmailError(v ?? ''),
             ),
             const SizedBox(height: 12),
             TextFormField(
