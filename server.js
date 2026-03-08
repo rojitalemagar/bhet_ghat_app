@@ -328,7 +328,7 @@ app.get('/api/auth/check-email', (req, res) => {
     return res.status(400).json({ message: 'Email parameter is required' });
   }
 
-  const exists = !!users[String(email).trim().toLowerCase()];
+  const exists = !!users[normalizeEmail(email)];
   return res.json({ exists });
 });
 
