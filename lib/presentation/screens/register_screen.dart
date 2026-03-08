@@ -363,15 +363,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-              validator: (v) {
-                if (v == null || v.isEmpty) {
-                  return 'Password is required';
-                }
-                if (v.length < 6) {
-                  return 'Password must be at least 6 characters';
-                }
-                return null;
-              },
+              validator: (v) => ValidationUtils.getPasswordError(v ?? ''),
             ),
             const SizedBox(height: 12),
             TextFormField(
