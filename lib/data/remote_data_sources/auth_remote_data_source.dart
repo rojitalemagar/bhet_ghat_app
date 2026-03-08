@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../core/constants/api_constants.dart';
+import '../../core/utils/validation_utils.dart';
 import '../models/user_model.dart';
 
 /// Abstract remote data source for authentication
@@ -38,6 +39,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
+      final normalizedEmail = ValidationUtils.normalizeEmail(email);
+      final trimmedName = name.trim();
       final response = await httpClient.post(
         Uri.parse('${ApiConstants.baseUrl}${ApiConstants.signUpEndpoint}'),
         headers: {
@@ -45,8 +48,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'Accept': 'application/json',
         },
         body: jsonEncode({
-          'name': name,
-          'email': email,
+          'name': trimmedName,
+          'email': normalizedEmail,
           'password': password,
         }),
       ).timeout(
@@ -62,8 +65,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         
         return UserModel(
           id: userData['id'] ?? '',
-          name: userData['name'] ?? name,
-          email: userData['email'] ?? email,
+          name: userData['name'] ?? trimmedName,
+          email: userData['email'] ?? normalizedEmail,
           password: password,
         );
       } else if (response.statusCode == 400) {
