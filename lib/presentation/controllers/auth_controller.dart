@@ -145,6 +145,12 @@ class AuthController extends ChangeNotifier {
       return false;
     }
 
+    final normalizedInterests = interests
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toSet()
+        .toList();
+
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -155,7 +161,7 @@ class AuthController extends ChangeNotifier {
         name: name,
         bio: bio,
         gender: gender,
-        interests: interests,
+        interests: normalizedInterests,
         profileImageUrls: profileImageUrls,
       );
       _applyProfileData(data);
