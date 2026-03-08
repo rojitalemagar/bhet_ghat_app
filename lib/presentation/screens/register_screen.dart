@@ -375,15 +375,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Icons.article_outlined,
                 hintStyle,
               ),
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) {
-                  return 'Bio is required';
-                }
-                if (v.trim().length < 10) {
-                  return 'Bio should be at least 10 characters';
-                }
-                return null;
-              },
+              validator: (v) => ValidationUtils.getBioError(v ?? ''),
             ),
             const SizedBox(height: 18),
             Consumer<AuthController>(
