@@ -1,3 +1,5 @@
+import '../constants/app_constants.dart';
+
 /// Validation utilities for user input
 class ValidationUtils {
   static String normalizeEmail(String email) {
@@ -13,7 +15,7 @@ class ValidationUtils {
 
   /// Validate password strength (minimum 6 characters)
   static bool isValidPassword(String password) {
-    return password.length >= 6;
+    return password.length >= AppConstants.minPasswordLength;
   }
 
   /// Validate name (not empty and trimmed)
@@ -38,7 +40,7 @@ class ValidationUtils {
       return 'Password cannot be empty';
     }
     if (!isValidPassword(password)) {
-      return 'Password must be at least 6 characters long';
+      return 'Password must be at least ${AppConstants.minPasswordLength} characters long';
     }
     return null;
   }
