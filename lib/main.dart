@@ -1,27 +1,98 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'app_theme.dart';
 import 'core/constants/app_constants.dart';
 import 'core/utils/service_locator.dart';
 import 'presentation/controllers/auth_controller.dart';
-import 'presentation/screens/login_screen.dart';
-import 'presentation/screens/register_screen.dart';
-import 'presentation/screens/splash_screen.dart';
-import 'presentation/screens/onboarding_screen.dart';
+import 'presentation/controllers/dating_controller.dart';
+import 'presentation/controllers/theme_controller.dart';
 import 'presentation/screens/dashboard_screen.dart';
-import 'app_theme.dart';
+import 'presentation/screens/login_screen.dart';
+import 'presentation/screens/onboarding_screen.dart';
+import 'presentation/screens/register_screen.dart';
+import 'presentation/screens/reset_password_screen.dart';
+import 'presentation/screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize service locator
   await ServiceLocator.init();
-
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  StreamSubscription<Uri>? _uriSub;
+  AppLinks? _appLinks;
+
+  @override
+  void initState() {
+    super.initState();
+    _initDeepLinks();
+  }
+
+  Future<void> _initDeepLinks() async {
+    _appLinks = AppLinks();
+
+    try {
+      final initialUri = await _appLinks!.getInitialLink();
+      _handleDeepLink(initialUri);
+    } catch (_) {
+      // no-op
+    }
+
+    _uriSub = _appLinks!.uriLinkStream.listen(
+      _handleDeepLink,
+      onError: (_) {
+        // no-op
+      },
+    );
+  }
+
+  void _handleDeepLink(Uri? uri) {
+    if (uri == null) {
+      return;
+    }
+
+    final hasResetRoute =
+        uri.host == 'reset-password' || uri.path.contains('reset-password');
+    if (!hasResetRoute) {
+      return;
+    }
+
+    final token = uri.queryParameters['token'];
+    if (token == null || token.trim().isEmpty) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final navigator = _navigatorKey.currentState;
+      if (navigator == null) {
+        return;
+      }
+
+      navigator.pushNamed(
+        AppConstants.resetPasswordRoute,
+        arguments: token.trim(),
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _uriSub?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,24 +104,45 @@ class MyApp extends StatelessWidget {
             loginUseCase: ServiceLocator.loginUseCase,
           ),
         ),
+        ChangeNotifierProvider(create: (_) => DatingController()),
+        ChangeNotifierProvider(create: (_) => ThemeController()),
       ],
-      child: MaterialApp(
-        title: 'BhetGhat',
-        theme: AppTheme.lightTheme,
-        home: const SplashScreen(),
-        routes: {
-          AppConstants.onboardingRoute: (context) => const OnboardingScreen(),
-          AppConstants.loginRoute: (context) => const LoginScreen(),
-          AppConstants.registerRoute: (context) => const RegisterScreen(),
-          AppConstants.dashboardRoute: (context) => const DashboardScreen(),
-          AppConstants.homeRoute: (context) => const HomeScreen(),
+      child: Consumer<ThemeController>(
+        builder: (context, themeController, _) {
+          return MaterialApp(
+            navigatorKey: _navigatorKey,
+            title: 'BhetGhat',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeController.isDarkMode
+                ? ThemeMode.dark
+                : ThemeMode.light,
+            home: const SplashScreen(),
+            routes: {
+              AppConstants.onboardingRoute: (_) => const OnboardingScreen(),
+              AppConstants.loginRoute: (_) => const LoginScreen(),
+              AppConstants.registerRoute: (_) => const RegisterScreen(),
+              AppConstants.dashboardRoute: (_) => const DashboardScreen(),
+              AppConstants.homeRoute: (_) => const HomeScreen(),
+            },
+            onGenerateRoute: (settings) {
+              if (settings.name == AppConstants.resetPasswordRoute) {
+                final tokenArg = settings.arguments;
+                final initialToken = tokenArg is String ? tokenArg : null;
+                return MaterialPageRoute(
+                  builder: (_) =>
+                      ResetPasswordScreen(initialToken: initialToken),
+                );
+              }
+              return null;
+            },
+          );
         },
       ),
     );
   }
 }
 
-// Placeholder Home Screen
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -65,10 +157,7 @@ class HomeScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Colors.deepPurple.shade300,
-              Colors.deepPurple.shade600,
-            ],
+            colors: [Colors.deepPurple.shade300, Colors.deepPurple.shade600],
           ),
         ),
         child: SafeArea(

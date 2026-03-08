@@ -14,7 +14,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<OnboardingPage> pages = [
     OnboardingPage(
       title: 'Namaste, Welcome to BhetGhat!',
-      description: 'Connect with people nearby and build meaningful relationships',
+      description:
+          'Connect with people nearby and build meaningful relationships',
       icon: Icons.people,
     ),
     OnboardingPage(
@@ -60,121 +61,103 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
         ),
-        child: Column(
-          children: [
-            // Logo at top
-            Padding(
-              padding: EdgeInsets.only(top: padding * 1.5),
-              child: Image.asset(
+        child: SafeArea(
+          child: Column(
+            children: [
+              SizedBox(height: padding * 0.5),
+              Image.asset(
                 'assets/images/bhetghat_logo.png',
                 width: isMobile ? 80 : 120,
                 height: isMobile ? 80 : 120,
                 fit: BoxFit.contain,
               ),
-            ),
-            // Page View
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() => _currentPage = index);
-                },
-                itemCount: pages.length,
-                itemBuilder: (context, index) {
-                  return OnboardingPageView(
-                    page: pages[index],
-                    isMobile: isMobile,
-                    padding: padding,
-                  );
-                },
+              SizedBox(height: isMobile ? 12 : 16),
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    setState(() => _currentPage = index);
+                  },
+                  itemCount: pages.length,
+                  itemBuilder: (context, index) {
+                    return OnboardingPageView(
+                      page: pages[index],
+                      isMobile: isMobile,
+                      padding: padding,
+                    );
+                  },
+                ),
               ),
-            ),
-            // Dots indicator
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: padding),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  pages.length,
-                  (index) => Container(
-                    width: _currentPage == index ? 24 : 12,
-                    height: 12,
-                    margin: const EdgeInsets.symmetric(horizontal: 6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: _currentPage == index
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.5),
+              SizedBox(
+                width: 240,
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      pages.length,
+                      (index) => Container(
+                        width: _currentPage == index ? 24 : 12,
+                        height: 12,
+                        margin: const EdgeInsets.symmetric(horizontal: 6),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: _currentPage == index
+                              ? Colors.white
+                              : Colors.white.withOpacity(0.5),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            // Buttons
-            Padding(
-              padding: EdgeInsets.all(padding),
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: isMobile ? 48 : 56,
-                    child: ElevatedButton(
-                      onPressed: _currentPage == pages.length - 1
-                          ? () => Navigator.pushReplacementNamed(context, '/login')
-                          : () => _pageController.nextPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        _currentPage == pages.length - 1 ? 'Get Started' : 'Next',
-                        style: TextStyle(
-                          color: Colors.deepPurple,
-                          fontSize: isMobile ? 16 : 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+              const SizedBox(height: 8),
+              if (_currentPage > 0)
+                TextButton(
+                  onPressed: () => _pageController.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
                   ),
-                  if (_currentPage > 0) ...[
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      height: isMobile ? 48 : 56,
-                      child: OutlinedButton(
-                        onPressed: () => _pageController.previousPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: Colors.white,
-                            width: 2,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          'Back',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: isMobile ? 16 : 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                  child: const Text(
+                    'Back',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                )
+              else
+                const SizedBox(height: 36),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(padding, 8, padding, padding),
+          child: SizedBox(
+            width: double.infinity,
+            height: isMobile ? 48 : 56,
+            child: ElevatedButton(
+              onPressed: _currentPage == pages.length - 1
+                  ? () => Navigator.pushReplacementNamed(context, '/login')
+                  : () => _pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
                     ),
-                  ],
-                ],
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                _currentPage == pages.length - 1 ? 'Get Started' : 'Next',
+                style: TextStyle(
+                  color: Colors.deepPurple,
+                  fontSize: isMobile ? 16 : 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

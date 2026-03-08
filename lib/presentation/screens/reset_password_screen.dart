@@ -3,25 +3,37 @@ import 'package:provider/provider.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../controllers/auth_controller.dart';
-import 'forgot_password_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ResetPasswordScreen extends StatefulWidget {
+  const ResetPasswordScreen({super.key, this.initialToken});
+
+  final String? initialToken;
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _tokenController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscure = true;
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _tokenController.text = widget.initialToken ?? '';
+  }
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _tokenController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -31,37 +43,36 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     final authController = context.read<AuthController>();
-    final user = await authController.login(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
+    final ok = await authController.resetPassword(
+      token: _tokenController.text.trim(),
+      newPassword: _passwordController.text,
     );
 
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
-    if (user != null) {
+    if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Login successful'),
+          content: Text('Password reset successful. Please login.'),
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pushReplacementNamed(context, AppConstants.dashboardRoute);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppConstants.loginRoute,
+        (route) => false,
+      );
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(authController.errorMessage ?? 'Login failed'),
+        content: Text(
+          authController.errorMessage ?? 'Failed to reset password',
+        ),
         backgroundColor: Colors.red,
-      ),
-    );
-  }
-
-  Future<void> _openForgotPasswordScreen() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) =>
-            ForgotPasswordScreen(initialEmail: _emailController.text.trim()),
       ),
     );
   }
@@ -70,7 +81,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 700;
-    final maxWidth = isMobile ? size.width : 440.0;
 
     return Scaffold(
       body: Container(
@@ -86,10 +96,10 @@ class _LoginScreenState extends State<LoginScreen> {
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(
                 horizontal: isMobile ? 16 : 24,
-                vertical: 24,
+                vertical: 20,
               ),
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxWidth),
+                constraints: const BoxConstraints(maxWidth: 460),
                 child: Container(
                   padding: EdgeInsets.all(isMobile ? 18 : 24),
                   decoration: BoxDecoration(
@@ -102,25 +112,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Form(
                     key: _formKey,
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Image.asset(
-                          'assets/images/bhetghat_logo.png',
-                          width: isMobile ? 84 : 96,
-                          height: isMobile ? 84 : 96,
-                        ),
-                        const SizedBox(height: 14),
                         Text(
-                          'Welcome Back',
+                          'Reset Password',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: isMobile ? 28 : 32,
                             color: Colors.white,
+                            fontSize: isMobile ? 28 : 32,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         Text(
-                          'Sign in to continue',
+                          'Set a new password to continue',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.85),
                             fontSize: isMobile ? 14 : 16,
@@ -128,68 +134,88 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
                         TextFormField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
+                          controller: _tokenController,
                           style: const TextStyle(color: Colors.white),
                           decoration: _inputDecoration(
-                            'Email',
-                            Icons.email_outlined,
+                            'Reset Token',
+                            Icons.vpn_key_outlined,
                           ),
-                          validator: (v) {
-                            if (v == null || v.trim().isEmpty) {
-                              return 'Please enter email';
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Reset token is required';
                             }
-                            if (!v.contains('@')) return 'Enter a valid email';
                             return null;
                           },
                         ),
                         const SizedBox(height: 12),
                         TextFormField(
                           controller: _passwordController,
-                          obscureText: _obscure,
+                          obscureText: _obscurePassword,
                           style: const TextStyle(color: Colors.white),
                           decoration:
                               _inputDecoration(
-                                'Password',
+                                'New Password',
                                 Icons.lock_outline,
                               ).copyWith(
                                 suffixIcon: IconButton(
+                                  onPressed: () => setState(
+                                    () => _obscurePassword = !_obscurePassword,
+                                  ),
                                   icon: Icon(
-                                    _obscure
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
+                                    _obscurePassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
                                     color: Colors.white,
                                   ),
-                                  onPressed: () =>
-                                      setState(() => _obscure = !_obscure),
                                 ),
                               ),
-                          validator: (v) {
-                            if (v == null || v.isEmpty) {
-                              return 'Please enter password';
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Password is required';
                             }
-                            if (v.length < 6) {
-                              return 'Password must be 6+ chars';
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters';
                             }
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: _openForgotPasswordScreen,
-                            child: const Text(
-                              'Forgot Password?',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: _confirmPasswordController,
+                          obscureText: _obscureConfirmPassword,
+                          style: const TextStyle(color: Colors.white),
+                          decoration:
+                              _inputDecoration(
+                                'Confirm Password',
+                                Icons.lock_reset_outlined,
+                              ).copyWith(
+                                suffixIcon: IconButton(
+                                  onPressed: () => setState(
+                                    () => _obscureConfirmPassword =
+                                        !_obscureConfirmPassword,
+                                  ),
+                                  icon: Icon(
+                                    _obscureConfirmPassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please confirm password';
+                            }
+                            if (value != _passwordController.text) {
+                              return 'Passwords do not match';
+                            }
+                            return null;
+                          },
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 20),
                         Consumer<AuthController>(
-                          builder: (context, authController, child) {
+                          builder: (context, authController, _) {
                             return SizedBox(
-                              width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
                                 onPressed: authController.isLoading
@@ -202,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: authController.isLoading
                                     ? const CircularProgressIndicator()
                                     : const Text(
-                                        'Login',
+                                        'Update Password',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -211,31 +237,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             );
                           },
                         ),
-                        const SizedBox(height: 14),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          children: [
-                            Text(
-                              'New to BhetGhat? ',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.8),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => Navigator.pushNamed(
-                                context,
-                                AppConstants.registerRoute,
-                              ),
-                              child: const Text(
-                                'Create Account',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ),
-                          ],
+                        const SizedBox(height: 12),
+                        TextButton(
+                          onPressed: () => Navigator.pushReplacementNamed(
+                            context,
+                            AppConstants.loginRoute,
+                          ),
+                          child: const Text(
+                            'Back to Login',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ],
                     ),

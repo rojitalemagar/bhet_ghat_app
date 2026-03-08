@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569" />
+    </marker>
+    <style>
+      .title { font: 700 28px 'Segoe UI', Arial, sans-serif; fill: #9f1239; }
+      .body { font: 600 18px 'Segoe UI', Arial, sans-serif; fill: #1f2937; }
+      .note { font: 500 15px 'Segoe UI', Arial, sans-serif; fill: #475569; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="620" fill="#f8fafc" />
+  <text x="70" y="60" class="title">Authentication and Data Flow Diagram</text>
+
+  <rect x="60" y="120" width="150" height="72" rx="18" fill="#ffffff" stroke="#fb7185" stroke-width="2.5" />
+  <text x="90" y="164" class="body">User Action</text>
+  <text x="78" y="218" class="note">Tap login or sign up</text>
+
+  <rect x="260" y="120" width="170" height="72" rx="18" fill="#ffffff" stroke="#fb7185" stroke-width="2.5" />
+  <text x="294" y="164" class="body">Flutter Screen</text>
+  <text x="270" y="218" class="note">LoginScreen / RegisterScreen</text>
+
+  <rect x="480" y="120" width="180" height="72" rx="18" fill="#ffffff" stroke="#f59e0b" stroke-width="2.5" />
+  <text x="506" y="164" class="body">AuthController</text>
+  <text x="501" y="218" class="note">State + loading + errors</text>
+
+  <rect x="710" y="120" width="170" height="72" rx="18" fill="#ffffff" stroke="#f59e0b" stroke-width="2.5" />
+  <text x="734" y="164" class="body">Use Case</text>
+  <text x="725" y="218" class="note">LoginUseCase / SignUpUseCase</text>
+
+  <rect x="930" y="120" width="200" height="72" rx="18" fill="#ffffff" stroke="#14b8a6" stroke-width="2.5" />
+  <text x="960" y="164" class="body">AuthRepository</text>
+  <text x="974" y="218" class="note">Implementation decides source</text>
+
+  <rect x="320" y="350" width="250" height="92" rx="20" fill="#ecfeff" stroke="#0891b2" stroke-width="2.5" />
+  <text x="368" y="390" class="body">Remote Data Source</text>
+  <text x="350" y="420" class="note">HTTP requests to Express backend</text>
+  <text x="362" y="445" class="note">Used first when network is available</text>
+
+  <rect x="640" y="350" width="250" height="92" rx="20" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.5" />
+  <text x="694" y="390" class="body">Local Data Source</text>
+  <text x="690" y="420" class="note">Hive local storage</text>
+  <text x="670" y="445" class="note">Fallback when remote call fails</text>
+
+  <rect x="290" y="510" width="310" height="70" rx="18" fill="#ffffff" stroke="#0891b2" />
+  <text x="365" y="552" class="body">Node.js / Express API</text>
+
+  <rect x="640" y="510" width="250" height="70" rx="18" fill="#ffffff" stroke="#16a34a" />
+  <text x="735" y="552" class="body">Hive Box</text>
+
+  <line x1="210" y1="156" x2="260" y2="156" stroke="#475569" stroke-width="3" marker-end="url(#arrow)" />
+  <line x1="430" y1="156" x2="480" y2="156" stroke="#475569" stroke-width="3" marker-end="url(#arrow)" />
+  <line x1="660" y1="156" x2="710" y2="156" stroke="#475569" stroke-width="3" marker-end="url(#arrow)" />
+  <line x1="880" y1="156" x2="930" y2="156" stroke="#475569" stroke-width="3" marker-end="url(#arrow)" />
+  <line x1="1030" y1="192" x2="445" y2="350" stroke="#475569" stroke-width="3" marker-end="url(#arrow)" />
+  <line x1="1030" y1="192" x2="765" y2="350" stroke="#475569" stroke-width="3" marker-end="url(#arrow)" />
+  <line x1="445" y1="442" x2="445" y2="510" stroke="#475569" stroke-width="3" marker-end="url(#arrow)" />
+  <line x1="765" y1="442" x2="765" y2="510" stroke="#475569" stroke-width="3" marker-end="url(#arrow)" />
+</svg>

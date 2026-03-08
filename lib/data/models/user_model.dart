@@ -19,11 +19,15 @@ class UserModel extends HiveObject {
   @HiveField(3)
   final String password;
 
+  @HiveField(4)
+  final String? profileImageUrl;
+
   UserModel({
     required this.id,
     required this.name,
     required this.email,
     required this.password,
+    this.profileImageUrl,
   });
 
   /// Convert from domain entity to model
@@ -33,6 +37,7 @@ class UserModel extends HiveObject {
       name: user.name,
       email: user.email,
       password: user.password,
+      profileImageUrl: user.profileImageUrl,
     );
   }
 
@@ -43,6 +48,7 @@ class UserModel extends HiveObject {
       name: name,
       email: email,
       password: password,
+      profileImageUrl: profileImageUrl,
     );
   }
 
@@ -52,17 +58,19 @@ class UserModel extends HiveObject {
     String? name,
     String? email,
     String? password,
+    String? profileImageUrl,
   }) {
     return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
       password: password ?? this.password,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
     );
   }
 
   @override
   String toString() {
-    return 'UserModel(id: $id, name: $name, email: $email)';
+    return 'UserModel(id: $id, name: $name, email: $email, profileImageUrl: $profileImageUrl)';
   }
 }

@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants/app_constants.dart';
 import '../controllers/auth_controller.dart';
-import 'forgot_password_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key, this.initialEmail});
+
+  final String? initialEmail;
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _obscure = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.text = widget.initialEmail?.trim() ?? '';
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
@@ -31,49 +34,40 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     final authController = context.read<AuthController>();
-    final user = await authController.login(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
+    final ok = await authController.sendPasswordResetLink(
+      _emailController.text.trim(),
     );
 
-    if (!mounted) return;
-
-    if (user != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login successful'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      Navigator.pushReplacementNamed(context, AppConstants.dashboardRoute);
+    if (!mounted) {
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(authController.errorMessage ?? 'Login failed'),
-        backgroundColor: Colors.red,
+        content: Text(
+          ok
+              ? 'If this email exists, reset link has been sent'
+              : (authController.errorMessage ?? 'Failed to send reset link'),
+        ),
+        backgroundColor: ok ? Colors.green : Colors.red,
       ),
     );
-  }
 
-  Future<void> _openForgotPasswordScreen() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) =>
-            ForgotPasswordScreen(initialEmail: _emailController.text.trim()),
-      ),
-    );
+    if (ok) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 700;
-    final maxWidth = isMobile ? size.width : 440.0;
 
     return Scaffold(
+      appBar: AppBar(title: const Text('Forgot Password')),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -89,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 vertical: 24,
               ),
               child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: maxWidth),
+                constraints: const BoxConstraints(maxWidth: 440),
                 child: Container(
                   padding: EdgeInsets.all(isMobile ? 18 : 24),
                   decoration: BoxDecoration(
@@ -102,25 +96,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Form(
                     key: _formKey,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.asset(
-                          'assets/images/bhetghat_logo.png',
-                          width: isMobile ? 84 : 96,
-                          height: isMobile ? 84 : 96,
-                        ),
-                        const SizedBox(height: 14),
                         Text(
-                          'Welcome Back',
+                          'Reset your password',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: isMobile ? 28 : 32,
+                            fontSize: isMobile ? 26 : 30,
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         Text(
-                          'Sign in to continue',
+                          'Enter your registered email to receive a reset link.',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.85),
                             fontSize: isMobile ? 14 : 16,
@@ -135,61 +126,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Email',
                             Icons.email_outlined,
                           ),
-                          validator: (v) {
-                            if (v == null || v.trim().isEmpty) {
+                          validator: (value) {
+                            final email = value?.trim() ?? '';
+                            if (email.isEmpty) {
                               return 'Please enter email';
                             }
-                            if (!v.contains('@')) return 'Enter a valid email';
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: _obscure,
-                          style: const TextStyle(color: Colors.white),
-                          decoration:
-                              _inputDecoration(
-                                'Password',
-                                Icons.lock_outline,
-                              ).copyWith(
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscure
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () =>
-                                      setState(() => _obscure = !_obscure),
-                                ),
-                              ),
-                          validator: (v) {
-                            if (v == null || v.isEmpty) {
-                              return 'Please enter password';
-                            }
-                            if (v.length < 6) {
-                              return 'Password must be 6+ chars';
+                            if (!email.contains('@')) {
+                              return 'Enter a valid email';
                             }
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: _openForgotPasswordScreen,
-                            child: const Text(
-                              'Forgot Password?',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 20),
                         Consumer<AuthController>(
-                          builder: (context, authController, child) {
+                          builder: (context, authController, _) {
                             return SizedBox(
-                              width: double.infinity,
                               height: 50,
                               child: ElevatedButton(
                                 onPressed: authController.isLoading
@@ -202,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: authController.isLoading
                                     ? const CircularProgressIndicator()
                                     : const Text(
-                                        'Login',
+                                        'Send Link',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -210,32 +161,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             );
                           },
-                        ),
-                        const SizedBox(height: 14),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          children: [
-                            Text(
-                              'New to BhetGhat? ',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.8),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => Navigator.pushNamed(
-                                context,
-                                AppConstants.registerRoute,
-                              ),
-                              child: const Text(
-                                'Create Account',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
                       ],
                     ),

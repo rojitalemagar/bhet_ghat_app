@@ -52,6 +52,15 @@ dependencies:
   # Logging
   logger: ^2.0.1
 
+  # Image Picker
+  image_picker: ^1.0.0
+
+  # Deep links
+  app_links: ^6.3.2
+
+  # Sensors
+  sensors_plus: ^6.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

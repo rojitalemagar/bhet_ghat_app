@@ -9,6 +9,7 @@ class AppConstants {
   static const String registerRoute = '/register';
   static const String dashboardRoute = '/dashboard';
   static const String homeRoute = '/home';
+  static const String resetPasswordRoute = '/reset-password';
 
   // Validation constants
   static const int minPasswordLength = 6;
