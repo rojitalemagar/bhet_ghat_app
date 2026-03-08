@@ -177,12 +177,13 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<bool> sendPasswordResetLink(String email) async {
+    final normalizedEmail = ValidationUtils.normalizeEmail(email);
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      await _apiService.requestPasswordReset(email);
+      await _apiService.requestPasswordReset(normalizedEmail);
       _isLoading = false;
       notifyListeners();
       return true;
