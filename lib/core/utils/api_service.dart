@@ -35,7 +35,7 @@ class ApiService {
 
     for (final baseUrl in _candidateBaseUrls) {
       try {
-        var uploadUri = Uri.parse('$baseUrl/upload/image');
+        var uploadUri = Uri.parse('$baseUrl${ApiConstants.uploadImageEndpoint}');
         if (userEmail != null && userEmail.trim().isNotEmpty) {
           uploadUri = uploadUri.replace(
             queryParameters: {'email': userEmail.trim()},
