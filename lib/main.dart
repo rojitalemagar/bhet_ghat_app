@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> {
         builder: (context, themeController, _) {
           return MaterialApp(
             navigatorKey: _navigatorKey,
-            title: 'BhetGhat',
+            title: AppConstants.appName,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeController.isDarkMode
