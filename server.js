@@ -254,6 +254,11 @@ app.post('/api/auth/signup', async (req, res) => {
   }
 
   const normalizedEmail = normalizeEmail(email);
+  const normalizedName = normalizeName(name);
+
+  if (normalizedName.length < 2) {
+    return res.status(400).json({ message: 'Name must be at least 2 characters' });
+  }
 
   if (users[normalizedEmail]) {
     return res.status(400).json({ message: 'Email already registered' });
@@ -271,7 +276,7 @@ app.post('/api/auth/signup', async (req, res) => {
 
     const newUser = {
       id: userId,
-      name,
+      name: normalizedName,
       email: normalizedEmail,
       password: hashedPassword,
       gender: gender || null,
