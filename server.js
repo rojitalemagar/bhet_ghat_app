@@ -249,7 +249,7 @@ app.post('/api/auth/signup', async (req, res) => {
     return res.status(400).json({ message: 'Name, email and password are required' });
   }
 
-  const normalizedEmail = String(email).trim().toLowerCase();
+  const normalizedEmail = normalizeEmail(email);
 
   if (users[normalizedEmail]) {
     return res.status(400).json({ message: 'Email already registered' });
