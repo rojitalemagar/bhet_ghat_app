@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/utils/validation_utils.dart';
 import 'accelerometer_screen.dart';
 import 'gyroscope_screen.dart';
 import '../controllers/auth_controller.dart';
@@ -144,20 +145,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   .toSet()
                   .toList();
 
-              if (name.length < 2) {
+              final nameError = ValidationUtils.getNameError(name);
+              if (nameError != null) {
                 messenger.showSnackBar(
-                  const SnackBar(
-                    content: Text('Name must be at least 2 characters'),
-                  ),
+                  SnackBar(content: Text(nameError)),
                 );
                 return;
               }
 
-              if (bio.length < 10) {
+              final bioError = ValidationUtils.getBioError(bio);
+              if (bioError != null) {
                 messenger.showSnackBar(
-                  const SnackBar(
-                    content: Text('Bio must be at least 10 characters'),
-                  ),
+                  SnackBar(content: Text(bioError)),
                 );
                 return;
               }
