@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/utils/validation_utils.dart';
 import '../models/user_model.dart';
 
 /// Local data source for authentication using Hive
@@ -33,17 +34,17 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> saveUser(UserModel user) async {
-    await _usersBox.put(user.email, user);
+    await _usersBox.put(ValidationUtils.normalizeEmail(user.email), user);
   }
 
   @override
   Future<UserModel?> getUserByEmail(String email) async {
-    return _usersBox.get(email);
+    return _usersBox.get(ValidationUtils.normalizeEmail(email));
   }
 
   @override
   Future<bool> isEmailRegistered(String email) async {
-    return _usersBox.containsKey(email);
+    return _usersBox.containsKey(ValidationUtils.normalizeEmail(email));
   }
 
   @override
