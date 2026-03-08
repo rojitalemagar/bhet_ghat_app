@@ -445,7 +445,7 @@ app.post('/api/upload/image', (req, res) => {
     const publicBaseUrl = getPublicBaseUrl(req);
     const imageUrl = `${publicBaseUrl}/uploads/${req.file.filename}`;
 
-    const email = req.query.email ? String(req.query.email).trim().toLowerCase() : '';
+    const email = req.query.email ? normalizeEmail(req.query.email) : '';
     if (email && users[email]) {
       users[email].profileImage = req.file.filename;
       if (!Array.isArray(users[email].profileImages)) {
