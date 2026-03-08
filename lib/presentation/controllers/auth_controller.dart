@@ -70,14 +70,18 @@ class AuthController extends ChangeNotifier {
 
   /// Login with email and password
   Future<User?> login({required String email, required String password}) async {
+    final normalizedEmail = ValidationUtils.normalizeEmail(email);
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final user = await _loginUseCase(email: email, password: password);
+      final user = await _loginUseCase(
+        email: normalizedEmail,
+        password: password,
+      );
       _currentUser = user;
-      await _syncProfileFromServer(email);
+      await _syncProfileFromServer(normalizedEmail);
       _isLoading = false;
       notifyListeners();
       return user;
