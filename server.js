@@ -260,6 +260,10 @@ app.post('/api/auth/signup', async (req, res) => {
     return res.status(400).json({ message: 'Name must be at least 2 characters' });
   }
 
+  if (String(password).length < 6) {
+    return res.status(400).json({ message: 'Password must be at least 6 characters' });
+  }
+
   if (users[normalizedEmail]) {
     return res.status(400).json({ message: 'Email already registered' });
   }
