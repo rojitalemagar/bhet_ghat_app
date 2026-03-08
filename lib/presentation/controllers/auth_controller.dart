@@ -121,8 +121,8 @@ class AuthController extends ChangeNotifier {
     required List<String> profileImageUrls,
   }) {
     _bio = bio;
-    _interests = List<String>.from(interests);
-    _profileImageUrls = List<String>.from(profileImageUrls);
+    _interests = interests.toSet().toList();
+    _profileImageUrls = profileImageUrls.toSet().toList();
     if (_currentUser != null && _profileImageUrls.isNotEmpty) {
       _currentUser = _currentUser!.copyWith(
         profileImageUrl: _profileImageUrls.first,
