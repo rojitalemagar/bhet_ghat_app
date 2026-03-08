@@ -210,7 +210,9 @@ class ApiService {
       final normalizedEmail = Uri.encodeComponent(email.trim().toLowerCase());
       final response = await http
           .get(
-            Uri.parse('$_baseUrl/auth/user/$normalizedEmail'),
+            Uri.parse(
+              '$_baseUrl${ApiConstants.authUserEndpoint}/$normalizedEmail',
+            ),
             headers: {'Accept': 'application/json'},
           )
           .timeout(const Duration(seconds: 20));
