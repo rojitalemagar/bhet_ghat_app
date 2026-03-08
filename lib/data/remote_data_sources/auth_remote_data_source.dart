@@ -90,6 +90,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
+      final normalizedEmail = ValidationUtils.normalizeEmail(email);
       final response = await httpClient.post(
         Uri.parse('${ApiConstants.baseUrl}${ApiConstants.loginEndpoint}'),
         headers: {
@@ -97,7 +98,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'Accept': 'application/json',
         },
         body: jsonEncode({
-          'email': email,
+          'email': normalizedEmail,
           'password': password,
         }),
       ).timeout(
@@ -114,7 +115,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         return UserModel(
           id: userData['id'] ?? '',
           name: userData['name'] ?? 'User',
-          email: userData['email'] ?? email,
+          email: userData['email'] ?? normalizedEmail,
           password: password,
         );
       } else if (response.statusCode == 401) {
