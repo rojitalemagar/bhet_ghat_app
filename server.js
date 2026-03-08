@@ -57,6 +57,10 @@ function normalizeEmail(email) {
   return String(email || '').trim().toLowerCase();
 }
 
+function normalizeName(name) {
+  return String(name || '').trim().replace(/\s+/g, ' ');
+}
+
 function getPublicBaseUrl(req) {
   const forwardedProto = req.headers['x-forwarded-proto'];
   const protocol = forwardedProto ? String(forwardedProto).split(',')[0] : req.protocol;
