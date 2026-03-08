@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/utils/validation_utils.dart';
 import '../controllers/auth_controller.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -126,16 +127,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             'Email',
                             Icons.email_outlined,
                           ),
-                          validator: (value) {
-                            final email = value?.trim() ?? '';
-                            if (email.isEmpty) {
-                              return 'Please enter email';
-                            }
-                            if (!email.contains('@')) {
-                              return 'Enter a valid email';
-                            }
-                            return null;
-                          },
+                          validator: (value) =>
+                              ValidationUtils.getEmailError(value ?? ''),
                         ),
                         const SizedBox(height: 20),
                         Consumer<AuthController>(
