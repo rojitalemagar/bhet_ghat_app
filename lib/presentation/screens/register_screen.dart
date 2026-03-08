@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/utils/api_service.dart';
+import '../../core/utils/validation_utils.dart';
 import '../controllers/auth_controller.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -327,15 +328,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Icons.person_outline,
                 hintStyle,
               ),
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) {
-                  return 'Name is required';
-                }
-                if (v.trim().length < 2) {
-                  return 'Name must be at least 2 characters';
-                }
-                return null;
-              },
+              validator: (v) => ValidationUtils.getNameError(v ?? ''),
             ),
             const SizedBox(height: 12),
             _buildGenderSelector(),
