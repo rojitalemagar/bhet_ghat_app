@@ -126,6 +126,15 @@ function sanitizeProfileImages(profileImages) {
     .slice(0, 6))];
 }
 
+function pruneExpiredResetTokens() {
+  const now = Date.now();
+  for (const [hashedToken, tokenRecord] of passwordResetTokens.entries()) {
+    if (now > tokenRecord.expiresAt) {
+      passwordResetTokens.delete(hashedToken);
+    }
+  }
+}
+
 async function sendResetEmail({ toEmail, resetLink }) {
   if (!mailTransport) {
     console.log('SMTP not configured. Password reset link (dev only):', resetLink);
