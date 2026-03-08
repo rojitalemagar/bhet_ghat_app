@@ -115,6 +115,17 @@ function sanitizeBio(bio) {
   return normalizedBio.length > 240 ? normalizedBio.slice(0, 240) : normalizedBio;
 }
 
+function sanitizeProfileImages(profileImages) {
+  if (!Array.isArray(profileImages)) {
+    return [];
+  }
+
+  return [...new Set(profileImages
+    .map((item) => String(item || '').trim())
+    .filter(Boolean)
+    .slice(0, 6))];
+}
+
 async function sendResetEmail({ toEmail, resetLink }) {
   if (!mailTransport) {
     console.log('SMTP not configured. Password reset link (dev only):', resetLink);
