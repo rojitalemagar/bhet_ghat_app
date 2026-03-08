@@ -339,7 +339,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
     return res.status(400).json({ message: 'Email is required' });
   }
 
-  const normalizedEmail = String(email).trim().toLowerCase();
+  const normalizedEmail = normalizeEmail(email);
   const user = users[normalizedEmail];
 
   // Neutral response to prevent user enumeration
