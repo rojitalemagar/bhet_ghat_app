@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/constants/app_constants.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -33,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Image.asset('assets/images/bhetghat_logo.png', width: 100, height: 100),
             const SizedBox(height: 24),
             Text(
-              'BhetGhat',
+              AppConstants.appName,
               style: Theme.of(context)
                   .textTheme
                   .headlineMedium
