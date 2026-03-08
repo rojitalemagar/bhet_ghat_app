@@ -160,15 +160,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       setState(() => _obscure = !_obscure),
                                 ),
                               ),
-                          validator: (v) {
-                            if (v == null || v.isEmpty) {
-                              return 'Please enter password';
-                            }
-                            if (v.length < 6) {
-                              return 'Password must be 6+ chars';
-                            }
-                            return null;
-                          },
+                          validator: (v) =>
+                              ValidationUtils.getPasswordError(v ?? ''),
                         ),
                         const SizedBox(height: 16),
                         Align(
