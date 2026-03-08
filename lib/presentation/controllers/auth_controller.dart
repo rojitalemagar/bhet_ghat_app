@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/utils/api_service.dart';
+import '../../core/utils/validation_utils.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
@@ -42,18 +43,20 @@ class AuthController extends ChangeNotifier {
     required String email,
     required String password,
   }) async {
+    final normalizedEmail = ValidationUtils.normalizeEmail(email);
+    final trimmedName = name.trim();
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
       final user = await _signUpUseCase(
-        name: name,
-        email: email,
+        name: trimmedName,
+        email: normalizedEmail,
         password: password,
       );
       _currentUser = user;
-      await _syncProfileFromServer(email);
+      await _syncProfileFromServer(normalizedEmail);
       _isLoading = false;
       notifyListeners();
       return user;
