@@ -1,5 +1,6 @@
 import 'package:uuid/uuid.dart';
 
+import '../../core/utils/validation_utils.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../local_data_sources/auth_local_data_source.dart';
@@ -24,11 +25,12 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
+    final normalizedEmail = ValidationUtils.normalizeEmail(email);
     try {
       // Try remote API first
       final userModel = await remoteDataSource.signUp(
         name: name,
-        email: email,
+        email: normalizedEmail,
         password: password,
       );
 
@@ -37,7 +39,9 @@ class AuthRepositoryImpl implements AuthRepository {
       return userModel.toEntity();
     } catch (e) {
       // Fallback to local storage if remote fails
-      final isRegistered = await localDataSource.isEmailRegistered(email);
+      final isRegistered = await localDataSource.isEmailRegistered(
+        normalizedEmail,
+      );
       if (isRegistered) {
         throw Exception('Email already registered');
       }
@@ -47,7 +51,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final userModel = UserModel(
         id: userId,
         name: name,
-        email: email,
+        email: normalizedEmail,
         password: password,
       );
 
@@ -61,10 +65,11 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
+    final normalizedEmail = ValidationUtils.normalizeEmail(email);
     try {
       // Try remote API first
       final userModel = await remoteDataSource.login(
-        email: email,
+        email: normalizedEmail,
         password: password,
       );
 
@@ -73,7 +78,7 @@ class AuthRepositoryImpl implements AuthRepository {
       return userModel.toEntity();
     } catch (e) {
       // Fallback to local storage if remote fails
-      final userModel = await localDataSource.getUserByEmail(email);
+      final userModel = await localDataSource.getUserByEmail(normalizedEmail);
 
       if (userModel == null) {
         throw Exception('User not found');
@@ -89,18 +94,21 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<bool> isEmailRegistered(String email) async {
+    final normalizedEmail = ValidationUtils.normalizeEmail(email);
     try {
       // Check remote first
-      return await remoteDataSource.isEmailRegistered(email);
+      return await remoteDataSource.isEmailRegistered(normalizedEmail);
     } catch (e) {
       // Fall back to local check
-      return await localDataSource.isEmailRegistered(email);
+      return await localDataSource.isEmailRegistered(normalizedEmail);
     }
   }
 
   @override
   Future<User?> getUserByEmail(String email) async {
-    final userModel = await localDataSource.getUserByEmail(email);
+    final userModel = await localDataSource.getUserByEmail(
+      ValidationUtils.normalizeEmail(email),
+    );
     return userModel?.toEntity();
   }
 }
