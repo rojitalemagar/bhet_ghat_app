@@ -243,7 +243,7 @@ class ApiService {
     try {
       final response = await http
           .put(
-            Uri.parse('$_baseUrl/users/profile'),
+            Uri.parse('$_baseUrl${ApiConstants.userProfileEndpoint}'),
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
