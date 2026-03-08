@@ -21,9 +21,12 @@ class ProfileController extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final normalizedEmail = userEmail?.trim();
       final url = await _apiService.uploadImage(
         imageFile,
-        userEmail: userEmail,
+        userEmail: normalizedEmail == null || normalizedEmail.isEmpty
+            ? null
+            : normalizedEmail,
       );
       _profileImageUrl = url;
       _isLoading = false;
